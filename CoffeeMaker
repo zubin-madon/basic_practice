@@ -1,0 +1,140 @@
+from typing import Any, Union
+
+MENU = {
+    "espresso": {
+        "ingredients": {
+            "water": 50,
+            "coffee": 18,
+        },
+        "cost": 1.5,
+    },
+    "latte": {
+        "ingredients": {
+            "water": 200,
+            "milk": 150,
+            "coffee": 24,
+        },
+        "cost": 2.5,
+    },
+    "cappuccino": {
+        "ingredients": {
+            "water": 250,
+            "milk": 100,
+            "coffee": 24,
+        },
+        "cost": 3.0,
+    }
+}
+
+resources = {
+    "water": 300,
+    "milk": 200,
+    "coffee": 100,
+    'quarters': 0,
+    'dimes': 0,
+    'nickles': 0,
+    'pennies': 0,
+}
+money_in_machine = 0
+
+
+def prompt():
+    user_input = input('What would you like? (espresso/latte/cappuccino): ')
+    return user_input
+
+
+def check(user_choice):
+    resources_check = {
+        "water": True,
+        "milk": True,
+        "coffee": True,
+    }
+    for key in MENU[user_choice]['ingredients']:
+        if resources[key] < MENU[user_choice]['ingredients'][key]:
+            resources_check[key] = False
+    if resources_check['water'] is True and resources_check['milk'] is True and resources_check['coffee'] is True:
+        return True
+    else:
+        return False
+
+
+def reduce_resources(user_choice):
+    global money_in_machine
+    for key in MENU[user_choice]['ingredients']:
+        resources[key] -= MENU[user_choice]['ingredients'][key]
+    money_left = money_in_machine - (MENU[user_choice]['cost'])
+    print(f"Here's your remaining change: ${money_left}")
+    resources['quarters'] = 0
+    resources['dimes'] = 0
+    resources['nickles'] = 0
+    resources['pennies'] = 0
+    print(f'''
+    Resources Left inside Coffeemaker: {resources}
+    ''')
+
+    money_in_machine = 0
+
+
+def take_money(user_choice):
+    global money_in_machine
+    print("Please insert coins!")
+    resources['quarters'] = int(input("How many quarters?: "))
+    resources['dimes'] = int(input("How many dimes?: "))
+    resources['nickles'] = int(input("How many nickles?: "))
+    resources['pennies'] = int(input("How many pennies?: "))
+    money_in_machine = int(resources['quarters']) * 0.25 + int(resources['dimes']) * 0.10 + int(resources['nickles']) * 0.05 + int(resources['pennies']) * 0.01
+    if money_in_machine > MENU[user_choice]['cost']:
+        return True
+    if money_in_machine < MENU[user_choice]['cost']:
+        print(f"Sorry! Cost of {user_choice} is ${MENU[user_choice]['cost']}. You put {money_in_machine}")
+        return False
+
+
+
+def make_coffee(user_choice):
+    global money_in_machine
+    check_ingredients = check(user_choice)
+    if check_ingredients:
+        check_money = take_money(user_choice)
+        if check_money:
+            print(f"here's your {user_choice} ☕")
+            reduce_resources(user_choice)
+
+        elif check_money is False:
+            print(f"Please collect your money back: ${money_in_machine}")
+            money_in_machine = 0
+            main.machine_on = False
+
+    if check_ingredients is False:
+        print("Not enough ingredients. Type 'report' to check supply levels. Type 'top up' to replenish resources.")
+
+
+
+def print_report():
+    print(resources)
+
+
+def top_up():
+    resources['water'] = 300
+    resources['milk'] = 200
+    resources['coffee'] = 100
+
+
+def main():
+    global resources
+    machine_on = True
+    while machine_on:
+        user_choice = prompt()
+        if user_choice == 'report':
+            print_report()
+        elif user_choice == 'top up':
+            top_up()
+        elif user_choice == 'exit':
+            machine_on = False
+        elif user_choice != 'espresso' and user_choice != 'latte' and user_choice != 'cappuccino':
+            print("Sorry wrong input! Try again \n")
+        else:
+            make_coffee(user_choice)
+
+
+main()
