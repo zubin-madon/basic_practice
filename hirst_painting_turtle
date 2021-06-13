@@ -1,0 +1,45 @@
+'''Create a Hirst painting using the Turtle module'''
+import turtle as t
+from turtle import Turtle, Screen
+import random
+
+color_palette = [(229, 228, 226), (225, 223, 224), (199, 175, 117), (124, 36, 24), (210, 221, 213), (168, 106, 57),
+                 (222, 224, 227), (186, 158, 53), (6, 57, 83), (109, 67, 85), (113, 161, 175), (22, 122, 174), (64, 153, 138),
+                 (39, 36, 36), (76, 40, 48), (9, 67, 47), (90, 141, 53), (181, 96, 79), (132, 40, 42), (210, 200, 151), (141, 171, 155),
+                 (179, 201, 186), (172, 153, 159), (212, 183, 177), (176, 198, 203)]
+
+tim = Turtle()
+tim.shape('circle')
+tim.pensize(20)
+t.colormode(255)
+tim.penup()
+tim.setpos(-150,100)
+
+def draw_and_move():
+    random_color = random.choice(color_palette)
+    r = int(random_color[0])
+    g = int(random_color[1])
+    b = int(random_color[2])
+    tim.color(r, g, b)
+    tim.dot(20)
+    tim.penup()
+    tim.forward(50)
+
+
+def draw_one_line():
+    for _ in range(9):
+        draw_and_move()
+
+x = -150
+y = 100
+for _ in range(9):
+    tim.penup()
+    tim.setpos(x,y)
+    draw_one_line()
+    y -= 50
+
+
+
+
+screen = Screen()
+screen.exitonclick()
